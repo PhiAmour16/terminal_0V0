@@ -9,12 +9,12 @@
         "url": "albums/poland2.jpeg",
         "title": "Olsztyn Main station, Poland",
         "date": "2026.02.21",
-        "size": "tall"
+        "size": "normal"
     },
     {
         "url": "albums/poland3.jpeg",
         "title": "UWM",
         "date": "2026.02.23",
-        "size": "large"
+        "size": "normal"
     }
 ]

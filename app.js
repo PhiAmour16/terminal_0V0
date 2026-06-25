@@ -140,7 +140,7 @@ function loadAlbums() {
     const gallery = document.getElementById('album-gallery');
     gallery.innerHTML = '<div style="color: #a4d4c8; animation: blinker 1s infinite;">&gt; DOWNLOADING_IMAGE_DATA...</div>';
     
-    fetch('data/albums.json')
+    fetch('albums.json')
         .then(res => res.json())
         .then(data => {
             let html = '';
