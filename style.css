@@ -1,0 +1,320 @@
+/* ==========================================
+   1. 基礎環境與全域樣式 (提亮幽綠色系)
+   ========================================== */
+body, html {
+    margin: 0; padding: 0; width: 100%; height: 100vh;
+    background-color: #1a2522;
+    background-image: radial-gradient(circle at 50% 50%, #293b37 0%, #111a18 100%);
+    font-family: 'Courier New', Courier, monospace, '微軟正黑體';
+    color: #e4f5f0; overflow: hidden; 
+}
+
+.scanlines {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none; z-index: 9997;
+}
+
+#transition-flash {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #d1e8e2; z-index: 9996; opacity: 0;
+    pointer-events: none; mix-blend-mode: overlay;
+}
+.flash-active { animation: crt-flash 0.4s ease-out; }
+@keyframes crt-flash {
+    0% { opacity: 0.8; filter: invert(100%); }
+    50% { opacity: 0.3; transform: scaleY(1.05); }
+    100% { opacity: 0; transform: scaleY(1); }
+}
+
+/* ==========================================
+   2. 故障風 Loading 畫面樣式
+   ========================================== */
+#loading-screen {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: #050807; z-index: 9999;
+    display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+}
+.loader-content { text-align: center; width: 300px; }
+.glitch-text {
+    position: relative; font-size: 24px; font-weight: bold; color: #a4d4c8; letter-spacing: 5px; margin-bottom: 20px;
+    animation: textFlicker 3s infinite alternate;
+}
+.glitch-text::before, .glitch-text::after {
+    content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050807;
+}
+.glitch-text::before { left: 3px; text-shadow: -2px 0 #ff003c; clip-path: inset(20% 0 80% 0); animation: glitch-anim-1 2s infinite linear alternate-reverse; }
+.glitch-text::after { left: -3px; text-shadow: -2px 0 #00e6f6; clip-path: inset(80% 0 20% 0); animation: glitch-anim-2 1.5s infinite linear alternate-reverse; }
+
+@keyframes glitch-anim-1 { 0% { clip-path: inset(20% 0 80% 0); } 20% { clip-path: inset(60% 0 10% 0); } 40% { clip-path: inset(40% 0 50% 0); } 100% { clip-path: inset(30% 0 40% 0); } }
+@keyframes glitch-anim-2 { 0% { clip-path: inset(10% 0 60% 0); } 40% { clip-path: inset(30% 0 20% 0); } 80% { clip-path: inset(5% 0 80% 0); } 100% { clip-path: inset(50% 0 30% 0); } }
+@keyframes textFlicker { 0%, 100% { opacity: 1; } 34% { opacity: 0.2; } 35% { opacity: 0.8; } 67% { opacity: 0.4; } }
+
+.loading-bar-container { width: 100%; height: 4px; background: rgba(44, 74, 67, 0.3); margin-bottom: 15px; overflow: hidden; }
+#loading-bar { height: 100%; width: 0%; background: #a4d4c8; box-shadow: 0 0 10px #a4d4c8; transition: width 0.1s linear; }
+.glitch-text-small { position: relative; font-size: 18px; color: #6b968a; margin-bottom: 30px; }
+.loading-warning { font-size: 10px; color: #ff003c; letter-spacing: 2px; opacity: 0.7; animation: blinker 0.2s step-end infinite alternate; }
+
+/* ==========================================
+   3. 頂部導覽與底部小工具 Layout
+   ========================================== */
+header {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; box-sizing: border-box; z-index: 1000;
+}
+nav {
+    display: flex; gap: 20px; background: rgba(10, 15, 14, 0.6); backdrop-filter: blur(8px);
+    border: 1px solid #4a7569; border-radius: 4px; padding: 10px 25px;
+}
+.nav-btn {
+    background: none; border: none; color: #8ab5a8; font-family: inherit; font-size: 14px;
+    cursor: pointer; letter-spacing: 2px; transition: color 0.3s;
+}
+.nav-btn:hover, .nav-btn.active { color: #c0f2e0; text-shadow: 0 0 10px rgba(192, 242, 224, 0.5); }
+
+.system-widgets { 
+    position: fixed; bottom: 25px; right: 40px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    font-size: 12px; color: #518276; 
+}
+.widget-box { background: rgba(0, 0, 0, 0.4); border: 1px dashed #4a7569; padding: 8px 15px; display: flex; align-items: center; gap: 10px; color: #8ab5a8; }
+.play-btn { background: #2c4a43; color: #050807; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+
+/* ==========================================
+   4. SPA 核心版面與基本面板
+   ========================================== */
+#app-container { width: 100%; height: 100vh; padding-top: 80px; box-sizing: border-box; display: flex; justify-content: center; position: relative; }
+.page { display: none; width: 90%; max-width: 1200px; height: calc(100vh - 120px); overflow-y: auto; padding-right: 20px; animation: fadeIn 0.5s ease-out; position: relative; z-index: 2; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-title { font-size: 2rem; color: #c0f2e0; border-bottom: 2px dashed #4a7569; padding-bottom: 15px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 5px; }
+.grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+.panel { background: rgba(30, 45, 40, 0.75); border: 1px solid #4a7569; padding: 25px; backdrop-filter: blur(8px); transition: transform 0.3s, border-color 0.3s; }
+.panel:hover { border-color: #8ab5a8; transform: translateY(-5px); }
+
+@keyframes blinker { 50% { opacity: 0; } }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #4a7569; border-radius: 3px; }
+
+/* ==========================================
+   5. HOME：畫布粒子與打字機游標
+   ========================================== */
+#particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto; }
+.home-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
+.blinking-cursor { display: inline-block; width: 12px; height: 1em; background-color: #a4d4c8; vertical-align: bottom; margin-left: 5px; animation: blinker 1s step-end infinite; }
+
+/* ==========================================
+   6. PROJECTS：Power BI 嵌入 & 可放大圖片
+   ========================================== */
+.iframe-wrapper { flex-grow: 1; position: relative; border: 1px solid #4a7569; background: #050807; display: flex; flex-direction: column; overflow: hidden; min-height: 350px; }
+.iframe-header { background: rgba(44, 74, 67, 0.4); padding: 5px 10px; font-size: 10px; color: #a4d4c8; font-family: monospace; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #4a7569; }
+.blinking-dot { width: 6px; height: 6px; background: #00e6f6; border-radius: 50%; animation: blinker 1s step-end infinite; }
+.iframe-wrapper iframe { width: 100%; flex-grow: 1; border: none; filter: grayscale(80%) contrast(1.2) brightness(0.7) sepia(30%) hue-rotate(150deg); opacity: 0.6; transition: all 0.5s ease-in-out; }
+.iframe-wrapper:hover iframe { filter: grayscale(0%) contrast(1) brightness(1) sepia(0%) hue-rotate(0deg); opacity: 1; }
+.iframe-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #518276; font-family: monospace; letter-spacing: 2px; pointer-events: none; transition: opacity 0.3s; }
+.iframe-wrapper:hover .iframe-hint { opacity: 0; }
+
+.zoomable-img-container { height: 350px; border: 1px solid #4a7569; overflow: hidden; background: rgba(10, 15, 14, 0.5); position: relative; }
+.zoomable-img { width: 100%; height: 100%; object-fit: cover; cursor: crosshair; filter: grayscale(60%) contrast(1.2) sepia(20%); transition: filter 0.4s ease, transform 0.4s ease; }
+.zoomable-img:hover { filter: grayscale(0%) contrast(1.1) sepia(0%); transform: scale(1.03); }
+
+/* ==========================================
+   7. ARTICLES：外部文件動態讀取與雷射光條
+   ========================================== */
+.file-btn { display: block; width: 100%; text-align: left; background: rgba(44, 74, 67, 0.1); border: 1px solid transparent; color: #a4d4c8; padding: 12px 15px; margin-bottom: 10px; cursor: pointer; font-family: inherit; font-size: 14px; transition: all 0.3s; }
+.file-btn:hover { background: rgba(44, 74, 67, 0.3); border-left: 3px solid #518276; }
+
+#articles div[style*="flex-grow: 1"] { position: relative; overflow: hidden; background: rgba(10, 15, 14, 0.2); padding: 20px; border: 1px solid rgba(44, 74, 67, 0.3); }
+/* 縱向影印機雷射掃描線 */
+#articles div[style*="flex-grow: 1"]::after {
+    content: ""; position: absolute; left: 0; width: 100%; height: 4px;
+    background: linear-gradient(to bottom, rgba(81, 130, 118, 0) 0%, rgba(164, 212, 200, 0.8) 50%, rgba(81, 130, 118, 0) 100%);
+    box-shadow: 0 0 15px rgba(164, 212, 200, 0.6); pointer-events: none;
+    animation: scanner-move 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes scanner-move { 0% { top: -5%; } 50% { top: 105%; } 100% { top: -5%; } }
+
+/* ==========================================
+   8. ALBUMS：不規則拼貼網格與鏡頭聚焦
+   ========================================== */
+#album-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); grid-auto-rows: 200px; gap: 15px; grid-auto-flow: dense; }
+.album-item { position: relative; cursor: crosshair; border: 1px solid #4a7569; overflow: hidden; background: rgba(10, 15, 14, 0.5); }
+.album-item img { width: 100%; height: 100%; display: block; object-fit: cover; filter: grayscale(60%) contrast(1.2) sepia(20%); transition: filter 0.4s ease, transform 0.4s ease; }
+.album-item:hover img { filter: grayscale(10%) contrast(1.1) sepia(0%); transform: scale(1.05); }
+
+.size-normal { grid-column: span 1; grid-row: span 1; }
+.size-wide   { grid-column: span 2; grid-row: span 1; }
+.size-tall   { grid-column: span 1; grid-row: span 2; }
+.size-large  { grid-column: span 2; grid-row: span 2; }
+
+/* 放大檢視鏡頭失焦重聚特效 */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+.modal-content { position: relative; max-width: 80%; max-height: 80vh; border: 2px solid #518276; box-shadow: 0 0 30px rgba(81, 130, 118, 0.3); }
+.modal-content img { max-width: 100%; max-height: 75vh; display: block; filter: grayscale(20%) contrast(1.1); animation: camera-focus 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+.modal-meta { background: #050807; color: #a4d4c8; padding: 10px; font-family: monospace; font-size: 14px; border-top: 1px dashed #518276; }
+
+@keyframes camera-focus {
+    0% { filter: blur(25px) brightness(2) contrast(0.5) grayscale(50%); transform: scale(1.08); }
+    60% { filter: blur(5px) brightness(1.2) contrast(1.2) grayscale(20%); }
+    100% { filter: blur(0px) brightness(1) contrast(1.1) grayscale(20%); transform: scale(1); }
+}
+
+/* ==========================================
+   9. ABOUT ME：遊戲卡片與交錯歷史線
+   ========================================== */
+.about-top-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+/* 1. 遊戲角色卡外觀 */
+.character-card {
+    display: flex;
+    gap: 25px;
+    background: rgba(30, 45, 40, 0.75);
+    border: 2px solid #4a7569;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(44, 74, 67, 0.3);
+    position: relative;
+}
+
+.character-card::before {
+    content: "PLAYER_STATUS";
+    position: absolute;
+    top: -10px; left: 15px;
+    background: #050807; color: #a4d4c8;
+    font-size: 10px; padding: 0 8px; letter-spacing: 1px;
+}
+
+.avatar-box {
+    width: 140px; height: 180px;
+    border: 1px dashed #518276;
+    background: rgba(44, 74, 67, 0.1);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: #518276; font-size: 11px; text-align: center;
+}
+
+.char-details {
+    flex-grow: 1;
+    display: flex; flex-direction: column;
+    gap: 8px;
+}
+.char-name { font-size: 24px; color: #fff; margin: 0; letter-spacing: 2px; }
+.char-class { font-size: 12px; color: #6b968a; margin: 0 0 10px 0; }
+.char-stat-row { font-size: 14px; color: #b5cdc6; display: flex; justify-content: space-between; }
+
+/* 角色基本狀態條 */
+.status-bar-container { width: 120px; height: 10px; background: rgba(0,0,0,0.5); border: 1px solid #2c4a43; display: inline-block; vertical-align: middle;}
+.status-bar-fill { height: 100%; background: #a4d4c8; box-shadow: 0 0 5px #a4d4c8;}
+
+/* 2. 技能等級模組 */
+.skills-card {
+    background: rgba(30, 45, 40, 0.75);
+    border: 1px solid #4a7569;
+    padding: 30px;
+}
+.skill-level-row {
+    margin-bottom: 18px;
+}
+.skill-info {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: #a4d4c8; margin-bottom: 5px;
+}
+.level-bar-bg {
+    width: 100%; height: 6px; background: rgba(0,0,0,0.4);
+    border: 1px solid #2c4a43; overflow: hidden;
+}
+.level-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #2c4a43, #a4d4c8);
+}
+
+/* 3. 左右交錯時間軸結構 */
+.timeline-wrapper {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+/* 中央貫穿線 */
+.timeline-wrapper::after {
+    content: ''; position: absolute;
+    width: 2px; background-color: #2c4a43;
+    top: 0; bottom: 0; left: 50%; margin-left: -1px;
+}
+
+.timeline-block {
+    position: relative; width: 50%;
+    box-sizing: border-box; padding: 20px 40px;
+}
+/* 左側區塊 */
+.timeline-block.left { left: 0; text-align: right; }
+/* 右側區塊 */
+.timeline-block.right { left: 50%; text-align: left; }
+
+/* 節點光圈 */
+.timeline-block::after {
+    content: ''; position: absolute;
+    width: 10px; height: 10px;
+    background-color: #050807; border: 2px solid #a4d4c8;
+    top: 35px; border-radius: 50%; z-index: 1;
+}
+.timeline-block.left::after { right: -6px; }
+.timeline-block.right::after { left: -6px; }
+
+/* 時間軸內面板樣式 */
+.timeline-panel {
+    background: rgba(30, 45, 40, 0.75);
+    border: 1px solid #4a7569;
+    padding: 20px; backdrop-filter: blur(4px);
+    transition: border-color 0.3s;
+    text-align: left; /* 保持面板內文字靠左閱讀 */
+}
+.timeline-panel:hover { border-color: #8ab5a8; }
+.timeline-panel h3 { margin: 0 0 10px 0; font-size: 18px; color: #a4d4c8; }
+.timeline-panel h4 { margin: 0 0 5px 0; font-size: 15px; color: #fff; }
+.timeline-item-date { font-size: 11px; color: #518276; font-family: monospace; margin-bottom: 10px; }
+.timeline-panel p { margin: 0 0 10px 0; font-size: 13px; color: #b5cdc6; line-height: 1.6; }
+.timeline-panel p:last-child { margin-bottom: 0; }
+/* 響應式微調 (螢幕太小時自動切回單欄) */
+@media screen and (max-width: 768px) {
+    .about-top-grid { grid-template-columns: 1fr; }
+    .timeline-wrapper::after { left: 31px; }
+    .timeline-block { width: 100%; padding-left: 50px; padding-right: 0; }
+    .timeline-block.left { left: 0; text-align: left; }
+    .timeline-block.right { left: 0; text-align: left; }
+    .timeline-block.left::after, .timeline-block.right::after { left: 25px; }
+}
+
+/* ==========================================
+   📱 10. 手機版 RWD 響應式控制
+   ========================================== */
+@media screen and (max-width: 768px) {
+    header { padding: 10px 0; background: rgba(26, 37, 34, 0.95); }
+    nav { width: 100vw; overflow-x: auto; white-space: nowrap; justify-content: flex-start; padding: 10px 15px; border-radius: 0; border-left: none; border-right: none; }
+    nav::-webkit-scrollbar { display: none; }
+
+    .system-widgets { position: fixed; bottom: 15px; left: 50%; right: auto; transform: translateX(-50%); flex-direction: row; justify-content: center; align-items: center; width: 100%; gap: 15px; padding: 0 15px; box-sizing: border-box; }
+    .spotify-widget { width: 180px; height: 60px; }
+
+    #app-container { padding-top: 70px; padding-bottom: 90px; }
+    .page { height: calc(100vh - 160px); width: 100%; padding: 0 15px 50px 15px; }
+
+    #type-title { font-size: 2.2rem !important; letter-spacing: 8px !important; }
+    #type-subtitle { font-size: 0.9rem !important; letter-spacing: 4px !important; }
+    #contact div[style*="width: 600px"] { width: 100% !important; height: auto !important; padding: 20px !important; font-size: 13px; }
+    
+    #album-gallery { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); grid-auto-rows: 140px; }
+    .size-wide, .size-large { grid-column: span 1; }
+
+    .about-top-grid { grid-template-columns: 1fr; }
+    .timeline-wrapper::after { left: 31px; }
+    .timeline-block { width: 100%; padding-left: 50px; padding-right: 0; text-align: left !important; }
+    .timeline-block.left::after, .timeline-block.right::after { left: 25px; }
+}

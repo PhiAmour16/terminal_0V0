@@ -1,0 +1,20 @@
+[
+    {
+        "url": "albums/backrooms.jpg",
+        "title": "空蕩的走廊_04",
+        "date": "2026.04.01",
+        "size": "normal"
+    },
+    {
+        "url": "albums/poland2.jpeg",
+        "title": "Olsztyn Main station, Poland",
+        "date": "2026.02.21",
+        "size": "tall"
+    },
+    {
+        "url": "albums/poland3.jpeg",
+        "title": "UWM",
+        "date": "2026.02.23",
+        "size": "large"
+    }
+]

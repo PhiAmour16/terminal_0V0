@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>終端記憶庫：個人觀測點</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="scanlines"></div>
+    <div id="transition-flash"></div> 
+
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="glitch-text" data-text="SYSTEM_LOADING...">SYSTEM_LOADING...</div>
+            <div class="loading-bar-container">
+                <div id="loading-bar"></div>
+            </div>
+            <div id="load-percent" class="glitch-text-small" data-text="00%">00%</div>
+            <div class="loading-warning">WARNING: UNSTABLE CONNECTION</div>
+        </div>
+    </div>
+
+    <header>
+        <nav id="navbar">
+            <button class="nav-btn active" onclick="switchPage('home')">HOME</button>
+            <button class="nav-btn" onclick="switchPage('projects')">PROJECTS</button>
+            <button class="nav-btn" onclick="switchPage('articles')">ARTICLES</button>
+            <button class="nav-btn" onclick="switchPage('albums')">ALBUMS</button>
+            <button class="nav-btn" onclick="switchPage('about')">ABOUT ME</button>
+            <button class="nav-btn" onclick="switchPage('contact')">CONTACT</button>
+        </nav>
+        <div class="system-widgets">
+            <div class="widget-box" style="letter-spacing: 2px;">LOC_OLSZTYN_ <span id="clock">00:00:00</span></div>
+
+        </div>
+    </header>
+
+    <div id="image-modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modal-img" src="" alt="Enlarged view">
+            <div id="modal-meta" class="modal-meta"></div>
+            <button class="modal-close" onclick="closeModal()">[X] CLOSE_VIEW</button>
+        </div>
+    </div>
+
+    <main id="app-container">
+
+        <section id="home" class="page active" style="width: 100%; max-width: none; padding-right: 0; overflow: hidden;">
+            <canvas id="particle-canvas"></canvas>
+            
+            <div class="home-content">
+                <h1 id="type-title" style="font-size: clamp(3rem, 6vw, 5rem); color: #a4d4c8; letter-spacing: 15px; margin: 0; display: inline; min-height: 1.2em;"></h1><span id="cursor" class="blinking-cursor" style="height: clamp(3rem, 6vw, 5rem);"></span>
+                <p id="type-subtitle" style="font-size: 1.2rem; color: #6b968a; letter-spacing: 8px; margin-top: 20px; min-height: 1.5em;"></p>
+                <div id="home-hint" style="margin-top: 40px; font-size: 12px; color: #518276; opacity: 0; transition: opacity 1s;">&gt; PLEASE_SELECT_A_NODE_TO_OBSERVE_</div>
+            </div>
+        </section>
+
+        <section id="projects" class="page">
+            <h2 class="page-title">PROJECTS_ 系統專案模組</h2>
+            <div class="grid-layout">
+                
+                <div class="panel" style="display: flex; flex-direction: column;">
+                    <h3 style="margin: 0 0 10px 0; color: #fff;">商業數據分析與觀測面板</h3>
+                    <p style="font-size: 14px; color: #b5cdc6; line-height: 1.6; margin-bottom: 20px;">建構數據清洗流（ETL），將混沌的底層資料庫轉換為直覺、可互動的動態儀表板。</p>
+                    <div class="iframe-wrapper">
+                        <div class="iframe-header"><span>&gt; CONNECTING_TO_SERVER...</span><span class="blinking-dot"></span></div>
+                        <iframe title="期末報告樣版" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiYzRmNzhkY2YtZDY1ZS00ZDZlLThjOTMtMzU2ZmVjYzA3MTU0IiwidCI6IjY2MTRiZGU2LTBlYjEtNGNiZi1hNGY0LWJkYzVlZDE4NTk5NSIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
+                        <div class="iframe-hint">Hover to Initialize Data_</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3 style="margin: 0 0 10px 0; color: #fff;">AI聊天人格測驗系統設計</h3>
+                    <p style="font-size: 14px; color: #b5cdc6; line-height: 1.6; margin-bottom: 20px;">以VibeCoding的AI技術為基礎，開發能以自然語言互動的聊天機器人，用於測試和評估不同的人格特質。</p>
+                    
+                    <div class="zoomable-img-container">
+                        <img 
+                            src="media/ai-chatbot.png" 
+                            class="zoomable-img" 
+                            alt="AI Chatbot" 
+                            onclick="openModal(this.src, 'SYS_PROJECT_VIEW // AI聊天人格測驗系統介面')"
+                        >
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="articles" class="page">
+            <h2 class="page-title">ARTICLES_ 截獲文本</h2>
+            <div style="display: flex; gap: 40px;">
+                <div style="flex-shrink: 0; width: 300px; border-right: 1px dashed #2c4a43; padding-right: 20px;">
+                    <div style="color: #6b968a; font-size: 12px; margin-bottom: 20px; letter-spacing: 2px;">AVAILABLE_FILES:</div>
+                    <button class="file-btn" onclick="loadArticle('articles/file_01.txt')"><span style="color: #518276; font-size: 10px;">[TXT]</span> FILE_01_極短篇練習#1</button>
+                    <button class="file-btn" onclick="loadArticle('articles/file_02.txt')"><span style="color: #518276; font-size: 10px;">[TXT]</span> FILE_02_極短篇練習#2</button>
+                    <button class="file-btn" onclick="loadArticle('articles/file_03.txt')"><span style="color: #518276; font-size: 10px;">[TXT]</span> FILE_03_我的波特萊爾街</button>
+                </div>
+                <div style="flex-grow: 1;">
+                    <div id="reader-status" style="color: #ff003c; font-size: 12px; letter-spacing: 2px; animation: blinker 1s infinite; display: none;">&gt; DECRYPTING_DATA...</div>
+                    <pre id="article-content" style="color: #b5cdc6; font-family: 'Courier New', monospace; font-size: 15px; line-height: 2; white-space: pre-wrap; word-wrap: break-word;">[ 請由左側面板選擇欲載入之檔案 ]</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="albums" class="page">
+            <h2 class="page-title">ALBUMS_ 空間影像紀錄</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="color: #6b968a; font-size: 12px; letter-spacing: 2px;">STATUS: WAITING_FOR_SYNC...</div>
+                <button class="nav-btn" onclick="loadAlbums()" style="border: 1px solid #2c4a43; padding: 5px 15px;">&gt; 點此同步影像資料庫</button>
+            </div>
+            <div id="album-gallery" class="masonry-grid"></div>
+        </section>
+
+        <section id="about" class="page">
+            <h2 class="page-title">ABOUT ME_ 實體觀測與參數設定檔</h2>
+
+            <div class="about-top-grid">
+                
+                <div class="character-card">
+                    <div class="avatar-box">
+                        <img src="media/Profile.jpeg" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; display: center;">
+                    </div>
+                    <div class="char-details">
+                        <h3 class="char-name">王培安 / Mikey</h3>
+                        <p class="char-class">CLASS: LANGUAGE & Literature // DATA_ANALYSIS </p>
+                        
+                        <div class="char-stat-row">
+                            <span>LEVEL (AGE)</span>
+                            <span style="font-family: monospace; color:#fff;">Lv. 22</span>
+                        </div>
+                        <div class="char-stat-row">
+                            <span>HP (ENERGY)</span>
+                            <div>
+                                <div class="status-bar-container"><div class="status-bar-fill" style="width: 100%;"></div></div>
+                                <span style="font-size:11px; font-family:monospace; margin-left:5px;">MAX</span>
+                            </div>
+                        </div>
+                        <div class="char-stat-row">
+                            <span>MP (CREATIVE)</span>
+                            <div>
+                                <div class="status-bar-container"><div class="status-bar-fill" style="width: 85%;"></div></div>
+                                <span style="font-size:11px; font-family:monospace; margin-left:5px;">85%</span>
+                            </div>
+                        </div>
+                        <div class="char-stat-row" style="margin-top: 5px; border-top: 1px dashed rgba(44,74,67,0.5); padding-top: 5px;">
+                            <span>LOCATION</span>
+                            <span style="color: #fff; font-size:12px;">臺北/ 宜蘭 / 波蘭 UWM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skills-card">
+                    <div class="skill-level-row">
+                        <div class="skill-info"><span>Power BI & 資料視覺化</span><span>Lv. 85</span></div>
+                        <div class="level-bar-bg"><div class="level-bar-fill" style="width: 85%;"></div></div>
+                    </div>
+                    <div class="skill-level-row">
+                        <div class="skill-info"><span>SQL & Python 數據分析</span><span>Lv. 75</span></div>
+                        <div class="level-bar-bg"><div class="level-bar-fill" style="width: 75%;"></div></div>
+                    </div>
+                    <div class="skill-level-row">
+                        <div class="skill-info"><span>英語能力 (TOEIC 805)</span><span>Lv. 80</span></div>
+                        <div class="level-bar-bg"><div class="level-bar-fill" style="width: 80%;"></div></div>
+                    </div>
+                    <div class="skill-level-row">
+                        <div class="skill-info"><span>網頁前端應用 (HTML/CSS/JS)</span><span>Lv. 70</span></div>
+                        <div class="level-bar-bg"><div class="level-bar-fill" style="width: 70%;"></div></div>
+                    </div>
+                    <div class="skill-level-row">
+                        <div class="skill-info"><span>文書軟體應用 (Word/Excel/PowerPoint)</span><span>Lv. 85</span></div>
+                        <div class="level-bar-bg"><div class="level-bar-fill" style="width: 85%;"></div></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="timeline-wrapper">
+
+                <div class="timeline-block right">
+                    <div class="timeline-panel">
+                        <h3>[ EDUCATION // 教育背景 ]</h3>
+                        <h4>臺灣 國立宜蘭大學 (NIU)</h4>
+                        <div class="timeline-item-date">2022/09 - 修讀中 // Yilan</div>
+                        <p>外國語文學系</p>
+                        <p>⼤數據管理與應⽤學士學位學程</p>
+                    </div>
+                </div>
+
+                <div class="timeline-block left">
+                    <div class="timeline-panel">
+                        <h3>[ WORK_LOG // 工作經歷 ]</h3>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h4>高中英文家教</h4>
+                            <div class="timeline-item-date">2025/04 - 2025/09</div>
+                            <p>協助學生維持課業並進行英語教學，將語文邏輯結構化解構。</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h4>華文課 TA (教學助理)</h4>
+                            <div class="timeline-item-date">2024 - 2025 // 國立宜蘭大學</div>
+                            <p>輔導外籍學生練習中文口說，設計教學活動引導跨語系表達。</p>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <h4>BUN BUN 棒棒 兼職人員</h4>
+                            <div class="timeline-item-date">2023/12 - 2024/02</div>
+                            <p>協助內外場備料、出餐與點餐清潔，高壓環境下的反應能力訓練。</p>
+                        </div>
+
+                        <div>
+                            <h4>7-11便利商店 兼職人員</h4>
+                            <div class="timeline-item-date">2022/06 - 2026/02</div>
+                            <p>收銀與商品上架，適應標準化商業系統，習得各階層顧客溝通。</p>
+                        </div>
+
+                        <div>
+                            <h4>全家便利商店 兼職人員</h4>
+                            <div class="timeline-item-date">2022/06 - 2026/02</div>
+                            <p>收銀與商品上架，適應標準化商業系統，習得各階層顧客溝通。</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="timeline-block right">
+                    <div class="timeline-panel">
+                        <h3>[ MISSION_REWARDS // 競賽與獎項 ]</h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h4>宜大人管院113年 ESG 永續發展專題競賽</h4>
+                            <div class="timeline-item-date">ESG永續發展組 - 第一名</div>
+                            <p>主導小組資料視覺化，負責開發「蘭陽窯 ESG 視覺化監控系統」操作版面，優化企業數據監控。</p>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <h4>國立宜蘭大學114年 宜大AI GO~ AI黑客松實作培訓暨競賽</h4>
+                            <div class="timeline-item-date">小組第一名</div>
+                            <p>和組員應用課程知識，利用生成式AI進行學校宣傳片製作，主要負責配音生成及影片剪輯</p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div class="timeline-block left">
+                    <div class="timeline-panel">
+                        <h3>[ EXT_ACTIVITIES // 課外活動 ]</h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h4>國際交流摩賽克志工</h4>
+                            <div class="timeline-item-date">CHRONO: 2022</div>
+                            <p>引導校內學生與外籍教師進行文化交流，實戰演練英語口說與雙向口譯能力。</p>
+                        </div>
+
+                        <div>
+                            <h4>私立金山社區復健中心志工</h4>
+                            <div class="timeline-item-date">CHRONO: 2022</div>
+                            <p>帶領中心學員進行創意活動與健康觀測，深入理解思覺失調症等精神光譜實體，習得深度同理溝通。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-block right">
+                    <div class="timeline-panel">
+                        <h3>[ LOCATION_SHIFT // 時空轉移 ]</h3>
+                        <h4>波蘭 瓦爾米亞馬祖里大學 (UWM)</h4>
+                        <div class="timeline-item-date">2026/02 - 2026/06 // Olsztyn</div>
+                        <p>地理座標移轉至波蘭。進行跨文化的異地獨立學術觀測，解鎖跨地理解構的思維模式。</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" class="page">
+            <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div style="background: rgba(0,0,0,0.6); border: 1px solid #2c4a43; width: 600px; max-width: 100%; height: 350px; padding: 20px; box-sizing: border-box; font-family: monospace;">
+                    <div style="color: #6b968a; margin-bottom: 20px;">System Command Prompt V1.0</div>
+                    <div style="color: #b5cdc6; line-height: 1.8;">
+                        &gt; 正在建立安全連線...<br>
+                        &gt; 通訊協定已就緒。<br><br>
+                        <span style="color: #a4d4c8;">&gt; EMAIL:</span> angela101699@gmail.com<br>
+                        <span style="color: #a4d4c8;">&gt; GITHUB:</span> github.com/PhiAmour16<br>
+                        &gt; 期待您的訊號<span style="display: inline-block; width: 10px; height: 1em; background: #a4d4c8; margin-left: 5px; animation: blinker 1s step-end infinite;"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
