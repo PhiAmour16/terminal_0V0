@@ -1,7 +1,8 @@
 // 1. 初始化 Supabase (URL 和 Anon Key 可以在 Supabase 後台的 Project Settings -> API 找到)
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 const SUPABASE_URL = 'https://ikrhmxramfjtlvgcavfa.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrcmhteHJhbWZqdGx2Z2NhdmZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0ODAwMTUsImV4cCI6MjA5ODA1NjAxNX0.tCPR3iOPChiUFfdg4fYHj5HVkKuZtfPUhbOQaN7mAYQ';
-const supabase = supabase.supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase= supabase.supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ==========================================
 // 1. Loading 進度條機制與打字效果觸發
