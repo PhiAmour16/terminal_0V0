@@ -90,16 +90,26 @@
 
         <section id="articles" class="page">
             <h2 class="page-title">ARTICLES_ 截獲文本</h2>
-            <div style="display: flex; gap: 40px;">
-                <div style="flex-shrink: 0; width: 300px; border-right: 1px dashed #2c4a43; padding-right: 20px;">
+            
+            <select id="mobile-article-selector" onchange="loadArticle(this.value)">
+                <option value="" disabled selected>-- 請選擇欲載入之檔案 --</option>
+                <option value="articles/file_01.txt">FILE_01_極短篇練習#1</option>
+                <option value="articles/file_02.txt">FILE_02_極短篇練習#2</option>
+                <option value="articles/file_03.txt">FILE_03_我的波特萊爾街</option>
+
+            </select>
+            
+            <div class="articles-layout-container">
+                <div class="desktop-article-menu">
                     <div style="color: #6b968a; font-size: 12px; margin-bottom: 20px; letter-spacing: 2px;">AVAILABLE_FILES:</div>
                     <button class="file-btn" onclick="loadArticle('articles/file_01.txt')"><span style="color: #518276; font-size: 10px;">[TXT]</span> FILE_01_極短篇練習#1</button>
                     <button class="file-btn" onclick="loadArticle('articles/file_02.txt')"><span style="color: #518276; font-size: 10px;">[TXT]</span> FILE_02_極短篇練習#2</button>
                     <button class="file-btn" onclick="loadArticle('articles/file_03.txt')"><span style="color: #518276; font-size: 10px;">[TXT]</span> FILE_03_我的波特萊爾街</button>
                 </div>
-                <div style="flex-grow: 1;">
+                
+                <div class="article-reader-window">
                     <div id="reader-status" style="color: #ff003c; font-size: 12px; letter-spacing: 2px; animation: blinker 1s infinite; display: none;">&gt; DECRYPTING_DATA...</div>
-                    <pre id="article-content" style="color: #b5cdc6; font-family: 'Courier New', monospace; font-size: 15px; line-height: 2; white-space: pre-wrap; word-wrap: break-word;">[ 請由左側面板選擇欲載入之檔案 ]</pre>
+                    <pre id="article-content" style="color: #b5cdc6; font-family: 'Courier New', monospace; font-size: 15px; line-height: 2; white-space: pre-wrap; word-wrap: break-word;">[ 請選擇欲載入之檔案 ]</pre>
                 </div>
             </div>
         </section>

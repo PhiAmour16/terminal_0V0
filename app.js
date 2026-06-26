@@ -123,6 +123,10 @@ function loadArticle(filePath) {
             setTimeout(() => {
                 contentBox.innerHTML = text;
                 contentBox.style.opacity = '1'; statusBox.style.display = 'none';
+
+                // 🔮 核心修正 3：讓手機版的下拉選單數值同步指向當前載入的檔案路徑
+                const mobileSelect = document.getElementById('mobile-article-selector');
+                if(mobileSelect) mobileSelect.value = filePath;
             }, 500);
         })
         .catch(err => {

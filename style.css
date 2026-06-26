@@ -123,20 +123,62 @@ nav {
 .zoomable-img:hover { filter: grayscale(0%) contrast(1.1) sepia(0%); transform: scale(1.03); }
 
 /* ==========================================
-   7. ARTICLES：外部文件動態讀取與雷射光條
+   7. ARTICLES：外部文件動態讀取
    ========================================== */
-.file-btn { display: block; width: 100%; text-align: left; background: rgba(44, 74, 67, 0.1); border: 1px solid transparent; color: #a4d4c8; padding: 12px 15px; margin-bottom: 10px; cursor: pointer; font-family: inherit; font-size: 14px; transition: all 0.3s; }
-.file-btn:hover { background: rgba(44, 74, 67, 0.3); border-left: 3px solid #518276; }
-
-#articles div[style*="flex-grow: 1"] { position: relative; overflow-x: hidden; overflow-y: auto; background: rgba(30, 45, 40, 0.5); padding: 20px; border: 1px solid rgba(74, 117, 105, 0.5); }
-/* 縱向影印機雷射掃描線 */
-#articles div[style*="flex-grow: 1"]::after {
-    content: ""; position: absolute; left: 0; width: 100%; height: 4px;
-    background: linear-gradient(to bottom, rgba(81, 130, 118, 0) 0%, rgba(164, 212, 200, 0.8) 50%, rgba(81, 130, 118, 0) 100%);
-    box-shadow: 0 0 15px rgba(164, 212, 200, 0.6); pointer-events: none;
-    animation: scanner-move 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+/* 電腦版文章佈局容器 */
+.articles-layout-container {
+    display: flex;
+    gap: 40px;
 }
-@keyframes scanner-move { 0% { top: -5%; } 50% { top: 105%; } 100% { top: -5%; } }
+
+.desktop-article-menu {
+    flex-shrink: 0;
+    width: 300px;
+    border-right: 1px dashed #2c4a43;
+    padding-right: 20px;
+}
+
+/* 🔮 修正：確保按鈕寬度 100% 撐滿左側欄，並維持標準寬度 */
+.file-btn {
+    display: block; 
+    width: 100%; 
+    box-sizing: border-box; /* 防止 padding 撐破寬度 */
+    text-align: left; 
+    background: rgba(44, 74, 67, 0.15); 
+    border: 1px solid rgba(74, 117, 105, 0.3); /* 給予微弱的初始邊框 */
+    color: #8ab5a8; 
+    padding: 12px 15px; 
+    margin-bottom: 12px;
+    cursor: pointer; 
+    font-family: inherit; 
+    font-size: 14px; 
+    transition: all 0.3s;
+}
+
+/* 滑鼠移上去時的發光與硬派左邊框 */
+.file-btn:hover { 
+    background: rgba(44, 74, 67, 0.35); 
+    border-color: #8ab5a8;
+    border-left: 4px solid #8ab5a8; /* 加粗左邊條 */
+    color: #c0f2e0;
+    padding-left: 18px; /* 微微向右位移，增加動態回饋 */
+}
+
+.article-reader-window {
+    flex-grow: 1;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: rgba(30, 45, 40, 0.5);
+    padding: 20px;
+    border: 1px solid rgba(74, 117, 105, 0.5);
+    min-height: 400px;
+}
+
+/* 預設隱藏手機版下拉選單 */
+#mobile-article-selector {
+    display: none;
+}
 
 /* ==========================================
    8. ALBUMS：不規則拼貼網格與鏡頭聚焦
@@ -340,5 +382,35 @@ nav {
     /* 🔮 修正：調整手機版技能條的寬度，防止超出邊界 */
     .status-bar-container {
         width: 100px;     /* 手機版血條稍微縮短一點 */
+    }
+    /* 🔮 核心修正 2：手機版文章區塊排版重組 */
+    .articles-layout-container {
+        flex-direction: column; /* 改為單欄垂直排列 */
+        gap: 15px;
+    }
+
+    .desktop-article-menu {
+        display: none; /* 隱藏左側的按鈕目錄 */
+    }
+
+    .article-reader-window {
+        width: 100%; /* 讓閱讀器在手機上 100% 拉滿 */
+        box-sizing: border-box;
+        padding: 15px;
+    }
+
+    /* 顯示手機版專用下拉選單，並套用終端機綠色風格 */
+    #mobile-article-selector {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        background-color: #1a2522;
+        color: #a4d4c8;
+        border: 1px solid #4a7569;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
     }
 }
