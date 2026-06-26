@@ -1,3 +1,8 @@
+// 1. 初始化 Supabase (URL 和 Anon Key 可以在 Supabase 後台的 Project Settings -> API 找到)
+const SUPABASE_URL = 'https://ikrhmxramfjtlvgcavfa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrcmhteHJhbWZqdGx2Z2NhdmZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0ODAwMTUsImV4cCI6MjA5ODA1NjAxNX0.tCPR3iOPChiUFfdg4fYHj5HVkKuZtfPUhbOQaN7mAYQ';
+const supabase = supabase.supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // ==========================================
 // 1. Loading 進度條機制與打字效果觸發
 // ==========================================
@@ -140,25 +145,35 @@ function loadArticle(filePath) {
 // ==========================================
 // 5. ALBUMS：不規則拼貼影像載入
 // ==========================================
-function loadAlbums() {
+async function loadAlbums() {
     const gallery = document.getElementById('album-gallery');
     gallery.innerHTML = '<div style="color: #a4d4c8; animation: blinker 1s infinite;">&gt; DOWNLOADING_IMAGE_DATA...</div>';
     
-    fetch('albums.json')
-        .then(res => res.json())
-        .then(data => {
-            let html = '';
-            data.forEach(item => {
-                let imgSize = item.size ? item.size : 'normal';
-                html += `
-                    <div class="album-item size-${imgSize}" onclick="openModal('${item.url}', '${item.title} // ${item.date}')">
-                        <img src="${item.url}" loading="lazy" alt="${item.title}">
-                        <div class="img-meta">REC: ${item.date} | ${item.title}</div>
-                    </div>`;
-            });
-            setTimeout(() => { gallery.innerHTML = html; }, 800);
-        })
-        .catch(err => { gallery.innerHTML = `<div style="color: #ff003c;">&gt; ERROR: 影像資料庫連線失敗。</div>`; });
+    try {
+        // 這裡會使用到最上方宣告的 supabase 物件
+        const { data, error } = await supabase
+            .from('albums')
+            .select('*')
+            .order('date', { ascending: false });
+
+        if (error) throw error;
+
+        let html = '';
+        data.forEach(item => {
+            let imgSize = item.size ? item.size : 'normal';
+            html += `
+                <div class="album-item size-${imgSize}" onclick="openModal('${item.url}', '${item.title} // ${item.date}')">
+                    <img src="${item.url}" loading="lazy" alt="${item.title}">
+                    <div class="img-meta">REC: ${item.date} | ${item.title}</div>
+                </div>`;
+        });
+        
+        setTimeout(() => { gallery.innerHTML = html; }, 800);
+
+    } catch (err) {
+        console.error(err);
+        gallery.innerHTML = `<div style="color: #ff003c;">&gt; ERROR: 影像資料庫連線失敗。</div>`;
+    }
 }
 
 // 圖片全域放大檢視器控制
