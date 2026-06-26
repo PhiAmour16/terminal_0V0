@@ -267,4 +267,12 @@ function initParticles() {
         connect();
     }
     init(); animate();
+// ==========================================
+// 🔮 破除模組隔離：將需要被 HTML 呼叫的函數掛載到全域 window 上
+// ==========================================
+window.switchPage = switchPage;
+window.loadArticle = loadArticle;
+window.loadAlbums = loadAlbums;
+window.closeModal = closeModal; // 如果你的 Modal 關閉按鈕也有用到 onclick 
+window.openModal = openModal;   // 專案圖片放大功能有用到 onclick
 }
